@@ -1,0 +1,4 @@
+server:
+  host: 0.0.0.0
+  node_rpc_url: https://mynano.ninja/api/node
+  port: 11338

@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile.postgres
+    env_file:
+      - db/database.env
+    volumes:
+      - data-volume:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:6.2.1-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/var/lib/redis
+
+  broker:
+    build:
+      context: ./broker
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbit-data:/var/lib/rabbitmq/
+
+  wallet:
+    build:
+      context: ./wallet
+      dockerfile: Dockerfile.wallet
+    ports:
+      - 11338:11338
+    volumes:
+      - pippin-data:/root/PippinData
+    depends_on:
+      - redis
+      - db
+
+  wallet-manager:
+    build:
+      context: ./wallet-manager
+    env_file:
+      - db/database.env
+      - wallet-manager/.env
+    ports:
+      - 4244:4244
+    depends_on:
+      - broker
+      - wallet
+      - db
+
+  auth-api:
+    build:
+      context: ./auth
+    env_file:
+      - db/database.env
+      - auth/.env
+    ports:
+      - 4243:4243
+    depends_on:
+      - broker
+      - wallet-manager
+      - db
+
+volumes:
+  data-volume:
+  redis-data:
+  pippin-data:
+  rabbit-data:

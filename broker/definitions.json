@@ -1,0 +1,62 @@
+{
+  "exchanges": [
+    {
+      "name": "monies",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "deposits",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "withdrawals",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "errors",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "monies",
+      "vhost": "/",
+      "destination": "deposits",
+      "destination_type": "queue",
+      "routing_key": "DEPOSIT",
+      "arguments": {}
+    },
+    {
+      "source": "monies",
+      "vhost": "/",
+      "destination": "withdrawals",
+      "destination_type": "queue",
+      "routing_key": "WITHDRAWAL",
+      "arguments": {}
+    },
+    {
+      "source": "monies",
+      "vhost": "/",
+      "destination": "errors",
+      "destination_type": "queue",
+      "routing_key": "ERROR",
+      "arguments": {}
+    }
+  ]
+}

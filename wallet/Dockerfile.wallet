@@ -1,0 +1,19 @@
+FROM python:3.8.8-slim-buster
+
+WORKDIR /usr/src/app
+
+RUN apt-get update
+RUN apt-get install gcc libc-dev g++ -y
+
+COPY requirements.txt ./
+RUN pip install --trusted-host pypi.org --no-cache-dir pippin-wallet==1.1.17
+
+RUN mkdir /root/PippinData
+COPY .env /root/PippinData/.env
+COPY config.yaml /root/PippinData/config.yaml
+
+RUN ls -al /root/PippinData
+
+EXPOSE 11338
+
+CMD ["pippin-server"]
